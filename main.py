@@ -38,8 +38,8 @@ def get_model(x_train, y_train):
     return model
 
 
-def get_validate(company, data, model, scaler, prediction_days):
-    test_data = get_data(company, dt(2020, 1, 1))
+def get_validate(company, data, model, scaler, prediction_days, period):
+    test_data = get_data(company, **period)
     actual_prices = test_data["Close"].values
 
     total_dataset = pd.concat((data["Close"], test_data["Close"]), axis=0)
@@ -70,14 +70,25 @@ def get_prediction(model_inputs, model, scaler):
     return prediction
 
 
-if __name__ == "__main__":
-    company = "GS"
-    prediction_days = 60
+def main(company, period, test_period, prediction_days):
     scaler = MinMaxScaler(feature_range=(0, 1))
-    data = get_data(company, dt(2012, 1, 1), dt(2020, 1, 1))
+    data = get_data(company, **period)
     x, y = get_trains(data, prediction_days, scaler)
     model = get_model(x, y)
-    model_inputs = get_validate(company, data, model, scaler, prediction_days)
+    model_inputs = get_validate(company, data, model, scaler, prediction_days, test_period)
     prediction = get_prediction(model_inputs, model, scaler)
     print(f"Prediction: {prediction}")
 
+
+if __name__ == "__main__":
+    company = "GS"
+    prediction_days = 60
+    period = {
+        "start": dt(2012, 1, 1),
+        "end": dt(2020, 1, 1)
+    }
+    test_period = {
+        "start": dt(2020, 1, 1),
+        "end": dt.now()
+    }
+    main(company, period, test_period, prediction_days)
