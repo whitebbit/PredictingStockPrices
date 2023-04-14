@@ -56,6 +56,7 @@ def get_validate(company, data, model, scaler, prediction_days, period):
     plt.plot(predicted_prices, color="green", label=f"Predicted {company} prices")
     plt.title(f"{company} Share Price")
     plt.xlabel("Time")
+    plt.ylabel("Price")
     plt.legend()
 
     plt.show()
